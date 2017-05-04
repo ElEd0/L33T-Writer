@@ -14,12 +14,20 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.JComboBox;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Frame extends JFrame {
 
 	private JPanel contentPane, internalPane;
 	private JTextField input, output;
 	private JScrollPane scrollPane;
+	private JComboBox<String> mode;
+	
+	private boolean extendedMode=false;
 	/**
 	 * Launch the application.
 	 */
@@ -42,15 +50,17 @@ public class Frame extends JFrame {
 	public Frame() {
 		setTitle("L33T Writer");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 400);
 		//main pane
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
+		this.setResizable(false);
 		
 		//output textfield
 		output = new JTextField("output");
+		
 		output.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent arg0) {
@@ -59,7 +69,7 @@ public class Frame extends JFrame {
 		});
 		
 		output.setEditable(false);
-		output.setBounds(5, 228, 424, 23);
+		output.setBounds(5, 338, 424, 23);
 		contentPane.add(output);
 		
 		//input textfield
@@ -71,7 +81,7 @@ public class Frame extends JFrame {
 				updatePane(input.getText());
 			}
 		});
-		input.setBounds(5, 5, 424, 20);
+		input.setBounds(5, 42, 424, 20);
 		contentPane.add(input);
 		input.setColumns(10);
 		
@@ -84,14 +94,25 @@ public class Frame extends JFrame {
 		//scrollpane to contain internalPane
 		scrollPane = new JScrollPane(internalPane);
 
-		scrollPane.setBounds(5, 36, 424, 192);
+		scrollPane.setBounds(5, 73, 424, 254);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 		
 		contentPane.add(scrollPane);
         contentPane.setPreferredSize(new Dimension(300, 400));
+        
+        mode = new JComboBox<String>();
+        mode.addItem("Normal");
+        mode.addItem("Extended");
+        mode.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		extendedMode=mode.getSelectedItem().equals("Extended");
+        		updatePane(input.getText());
+        	}
+        });
+        mode.setBounds(10, 11, 125, 20);
+        contentPane.add(mode);
 		
-
 	}
 	
 	public void updatePane(String text){
@@ -132,6 +153,6 @@ public class Frame extends JFrame {
 	}
 	
 	public void addCharList(String c, int selectedValue){
-		internalPane.add(new CharList(c, internalPane.getComponentCount(), selectedValue));
+		internalPane.add(new CharList(c, internalPane.getComponentCount(), selectedValue, extendedMode));
 	}
 }

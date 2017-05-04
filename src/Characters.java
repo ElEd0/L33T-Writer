@@ -1,26 +1,48 @@
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 public class Characters {
 	
-	private HashMap<String, List<String>> chars = new HashMap<String, List<String>>();
+	private BufferedReader br;
+	private File charFile;
 	
-	public Characters(){
-		chars.put("a", Arrays.asList("a", "A", "4", "@", "∂", "λ", "α", "Δ"));
-		chars.put("b", Arrays.asList("b", "B", "6", "ß", "|3", "β"));
-		
-		chars.put("null", Arrays.asList("null"));
+	public Characters(boolean ext){
+		charFile = ext?new File("list_ext.lst"):new File("list.lst");
+		if (!charFile.exists()){
+			System.err.println("error");
+			return;
+		}
 	}
 	
 	public ArrayList<String> getCharsForLetter(String c){
-		ArrayList<String> aux = new ArrayList<String>();
-		if (!chars.containsKey(c.toLowerCase())) c="null";
-		for(int i=0; i<chars.get(c.toLowerCase()).size(); i++){
-			aux.add(chars.get(c.toLowerCase()).get(i));
+		
+		String line="";
+		boolean found=false;
+		try {
+			br = new BufferedReader(new FileReader(charFile));
+			
+			while((line = br.readLine())!=null){
+				if(line.startsWith(c.toUpperCase())){
+					line = line.substring(3);
+					found=true;
+					break;
+				}
+			}
+			
+		} catch (IOException e) {
+			System.err.println("exception reading file");
 		}
+		
+		line=found?line:"null";
+		
+		ArrayList<String> aux = new ArrayList<String>();
+		aux.addAll(Arrays.asList(line.split(",")));
+		
 		return aux;
 		
 	}
