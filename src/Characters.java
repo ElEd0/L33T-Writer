@@ -21,6 +21,8 @@ public class Characters {
 	
 	public ArrayList<String> getCharsForLetter(String c){
 		
+		c=c.toUpperCase().equals("Ñ")?"N":c;
+		
 		String line="";
 		boolean found=false;
 		try {
